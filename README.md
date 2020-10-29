@@ -6,6 +6,22 @@
 
 This is a forked assignment, to be Ebrahim's solution to project 01 of udacity's c++ course.
 
+### Installing IO2D on Debian
+
+This was the only tricky part of the build instructions below.
+
+- Ensure that cmake, make, and gcc are installed.
+- Install the dependencies of IO2D: `sudo apt install libcairo2-dev libgraphicsmagick1-dev libpng-dev`
+- Make sure you got all the submodules from this repo: `git submodule update --init --recursive`
+- Go to `thirdparty/P0267_RefImpl` and `mkdir build; cd build;`
+- Cmake only what's needed: `cmake -DIO2D_WITHOUT_TESTS=true -DIO2D_WITHOUT_SAMPLES=true ..`
+- Finally, install to system: `sudo make install`
+
+I hate the last step...
+It should be possible to link the local copy of the static library that we get from just plain `make`,
+and this would be better than installing to the system with `sudo make install`.
+But I'm currently not understanding how to tweak `CMakeLists.txt` to get this to happen.
+
 ---
 
 This repo contains the starter code for the Route Planning project.
