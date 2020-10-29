@@ -19,6 +19,7 @@ class RoutePlanner {
     float CalculateHValue(RouteModel::Node const *node);
     std::vector<RouteModel::Node> ConstructFinalPath(RouteModel::Node *);
     RouteModel::Node *NextNode();
+    std::vector<RouteModel::Node*>::size_type open_list_size() const; // To help in tests
 
   private:
     // Add private variables or methods declarations here.

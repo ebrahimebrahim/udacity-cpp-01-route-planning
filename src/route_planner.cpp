@@ -15,6 +15,11 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 }
 
 
+std::vector<RouteModel::Node*>::size_type RoutePlanner::open_list_size() const {
+    return open_list.size();
+}
+
+
 // TODO 3: Implement the CalculateHValue method.
 // Tips:
 // - You can use the distance to the end_node for the h value.
@@ -36,10 +41,17 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
     for (RouteModel::Node* node : current_node->neighbors){
         if (!node->explored){
-            node->parent = current_node;
-            node->h_value = CalculateHValue(node);
-            node->g_value = current_node->g_value + node->distance(*current_node);
-            if (!node->visited){
+            float new_g_value = current_node->g_value + node->distance(*current_node);
+            if (node->visited) {
+                if (new_g_value < node->g_value) {
+                    node->parent = current_node;
+                    node->g_value = new_g_value;
+                }
+            }
+            else {
+                node->parent = current_node;
+                node->h_value = CalculateHValue(node);
+                node->g_value = new_g_value;
                 open_list.push_back(node);
                 node->visited = true;
             }

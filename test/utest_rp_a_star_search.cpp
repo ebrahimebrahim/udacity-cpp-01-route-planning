@@ -107,6 +107,22 @@ TEST_F(RoutePlannerTest, TestConstructFinalPath) {
 }
 
 
+// Test the NextNode method.
+TEST_F(RoutePlannerTest, TestNextNode) {
+    route_planner.AddNeighbors(start_node);
+    auto open_list_size_before = route_planner.open_list_size();
+    std::vector<RouteModel::Node*> next_nodes;
+    for (int i=0; i < 3; ++i) // I know that map.osm has at least three neighbors to the start_node
+        next_nodes.push_back(route_planner.NextNode());
+    auto open_list_size_after = route_planner.open_list_size();
+    EXPECT_EQ(open_list_size_before - 3, open_list_size_after);
+    for (int i=1; i < 3; ++i) { // I know that map.osm has at least three neighbors to the start_node
+        EXPECT_GT(next_nodes[i]->g_value+next_nodes[i]->h_value, next_nodes[i-1]->g_value+next_nodes[i-1]->h_value);
+    } 
+    
+}
+
+
 // Test the AStarSearch method.
 TEST_F(RoutePlannerTest, TestAStarSearch) {
     route_planner.AStarSearch();
