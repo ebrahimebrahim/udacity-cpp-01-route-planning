@@ -43,7 +43,7 @@ int main(int argc, const char **argv)
     
     std::vector<std::byte> osm_data;
  
-    if( osm_data.empty() && !osm_data_file.empty() ) {
+    if( !osm_data_file.empty() ) {
         std::cout << "Reading OpenStreetMap data from the following file: " <<  osm_data_file << std::endl;
         auto data = ReadFile(osm_data_file);
         if( !data )
