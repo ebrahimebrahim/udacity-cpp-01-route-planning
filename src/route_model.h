@@ -15,8 +15,7 @@ class RouteModel : public Model {
         Node * parent = nullptr;
         float h_value = std::numeric_limits<float>::max();
         float g_value = 0.0;
-        bool visited = false; // "visited" means node has entered "frontier" or "open_list" of the A* search
-        bool explored = false; // "explored" means node has entered "explored" of A* search, i.e. we have already found optimal path from start to it 
+        bool visited = false;
         std::vector<Node *> neighbors;
 
         void FindNeighbors();
