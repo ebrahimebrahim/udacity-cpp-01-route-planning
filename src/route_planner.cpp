@@ -30,6 +30,27 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 }
 
 
+// If node has been visited then update its entry in open_list based on the potential new path
+// start_node ----[chain of current_node's parents]---> current_node ---> node
+// If node has not been visited, then create for it a new entry in open_list
+void RoutePlanner::UpdateOpenList(RouteModel::Node* current_node, RouteModel::Node* node) {
+    float new_g_value = current_node->g_value + node->distance(*current_node);
+    if (node->visited) {
+        if (new_g_value < node->g_value) {
+            node->parent = current_node;
+            node->g_value = new_g_value;
+        }
+    }
+    else {
+        node->parent = current_node;
+        node->h_value = CalculateHValue(node);
+        node->g_value = new_g_value;
+        open_list.push_back(node);
+        node->visited = true;
+    }
+}
+
+
 // TODO 4: Complete the AddNeighbors method to expand the current node by adding all unvisited neighbors to the open list.
 // Tips:
 // - Use the FindNeighbors() method of the current_node to populate current_node.neighbors vector with all the neighbors.
@@ -40,22 +61,8 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
     for (RouteModel::Node* node : current_node->neighbors){
-        if (!node->explored){
-            float new_g_value = current_node->g_value + node->distance(*current_node);
-            if (node->visited) {
-                if (new_g_value < node->g_value) {
-                    node->parent = current_node;
-                    node->g_value = new_g_value;
-                }
-            }
-            else {
-                node->parent = current_node;
-                node->h_value = CalculateHValue(node);
-                node->g_value = new_g_value;
-                open_list.push_back(node);
-                node->visited = true;
-            }
-        }
+        if (!node->explored)
+            UpdateOpenList(current_node, node);
     }
 }
 
