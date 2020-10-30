@@ -121,6 +121,7 @@ void RoutePlanner::AStarSearch() {
 
     // TODO: Implement your solution here.
     open_list.emplace_back(start_node);
+    start_node->visited = true;
     while (true) {
         if (open_list.empty()) {
             std::cout << "Unable to find path.\n";
