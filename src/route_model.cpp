@@ -42,14 +42,48 @@ RouteModel::Node *RouteModel::Node::FindNeighbor(std::vector<int> node_indices) 
 }
 
 
-void RouteModel::Node::FindNeighbors() {
-    for (auto & road : parent_model->node_to_road[this->index]) {
-        RouteModel::Node *new_neighbor = this->FindNeighbor(parent_model->Ways()[road->way].nodes);
-        if (new_neighbor) {
-            this->neighbors.emplace_back(new_neighbor);
+std::vector<RouteModel::Node*> RouteModel::Node::FindTwoNearestNeighbors(std::vector<int> node_indices) {
+    Node* closest_node = nullptr;
+    Node* second_closest_node = nullptr;
+    Node node;
+
+    for (int node_index : node_indices) {
+        node = parent_model->SNodes()[node_index];
+        float dist = this->distance(node);
+        if (dist==0.0f) continue;
+        if (closest_node == nullptr || dist < this->distance(*closest_node)) {
+            closest_node = &parent_model->SNodes()[node_index];
+        }
+        else if (second_closest_node == nullptr || dist < this->distance(*second_closest_node)) {
+            second_closest_node = &parent_model->SNodes()[node_index];
         }
     }
+
+    std::vector<RouteModel::Node*> out{closest_node, second_closest_node};
+
+    return out;
 }
+
+
+void RouteModel::Node::FindNeighbors() {
+    this->neighbors.clear();
+    for (auto & road : parent_model->node_to_road[this->index]) {
+        std::vector<RouteModel::Node*> two_new_neighbors = this->FindTwoNearestNeighbors(parent_model->Ways()[road->way].nodes);
+        for (Node* new_neighbor : two_new_neighbors)
+            if (new_neighbor)
+                this->neighbors.emplace_back(new_neighbor);
+    }
+}
+
+
+// void RouteModel::Node::FindNeighbors() {
+//     for (auto & road : parent_model->node_to_road[this->index]) {
+//         RouteModel::Node *new_neighbor = this->FindNeighbor(parent_model->Ways()[road->way].nodes);
+//         if (new_neighbor) {
+//             this->neighbors.emplace_back(new_neighbor);
+//         }
+//     }
+// }
 
 
 RouteModel::Node &RouteModel::FindClosestNode(float x, float y) {

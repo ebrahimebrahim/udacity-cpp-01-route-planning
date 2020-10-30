@@ -26,7 +26,7 @@ std::vector<RouteModel::Node*>::size_type RoutePlanner::open_list_size() const {
 // - Node objects have a distance method to determine the distance to another node.
 
 float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
-    return node->distance(*end_node);
+    return 0.0 * node->distance(*end_node);
 }
 
 
@@ -36,6 +36,7 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 void RoutePlanner::UpdateOpenList(RouteModel::Node* current_node, RouteModel::Node* node) {
     float new_g_value = current_node->g_value + node->distance(*current_node);
     if (node->visited) {
+        // std::cout << "\npeup\n";
         if (new_g_value < node->g_value) {
             node->parent = current_node;
             node->g_value = new_g_value;
@@ -123,11 +124,44 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 // - When the search has reached the end_node, use the ConstructFinalPath method to return the final path that was found.
 // - Store the final path in the m_Model.path attribute before the method exits. This path will then be displayed on the map tile.
 
+#include <sstream>
+std::string n_to_str(RouteModel::Node* n){
+    std::ostringstream oss;
+    oss << "(" << n->x << ", " << n->y << ")";
+    return oss.str();
+}
+
+void print_neighbors(RouteModel::Node* n) {
+    n->FindNeighbors();
+    for (auto nbr : n->neighbors)
+        std::cout << n_to_str(nbr) << ",  ";
+    std::cout << "\n";
+}
+
 void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
 
+
+    std::cout << "\n";
+    std::cout << "Neighbors of "<< n_to_str(start_node) << ", which is start_node: ";
+    print_neighbors(start_node);
+    std::cout <<"---\n";
+    for (auto nbr : start_node->neighbors){
+        std::cout << "Neighbors of " << n_to_str(nbr) << ": ";
+        print_neighbors(nbr);
+    }
+    std::cout <<"---\n";
+    for (auto nbr : start_node->neighbors){
+        for (auto nbr2 : nbr->neighbors){
+            std::cout << "Neighbors of " << n_to_str(nbr2) << ": ";
+            print_neighbors(nbr2);
+        }
+    }
+    std::cout << "\n";
+
+
     // TODO: Implement your solution here.
-    open_list.emplace_back(start_node);
+    open_list.push_back(start_node);
     start_node->visited = true;
     while (true) {
         if (open_list.empty()) {
