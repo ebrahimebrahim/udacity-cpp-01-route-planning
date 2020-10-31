@@ -1,0 +1,7 @@
+The tests pass, but I believe there are still problems:
+
+If this is a correct implementation of A*, then setting the heuristic function to 0 should reduce to Uniform cost search, which should always yield an optimal path. However, setting the heuristic function to 0 yields some bogus results (very clearly non-optimal paths).
+
+I suspect that the reason for this is that we are not really implementing Astar here, because RouteModel::Node::FindNeighbors is designed to never find an already-visited neighbor. The real Astar/UCS algorithm should look at already-visited nodes that we have not yet found the optimal path to, so that it can update the path if it finds a better one.
+
+Ebrahim
