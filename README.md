@@ -17,7 +17,7 @@ This was the only tricky part of the build instructions below.
 - Cmake only what's needed: `cmake -DIO2D_WITHOUT_TESTS=true -DIO2D_WITHOUT_SAMPLES=true ..`
 - Finally, install to system: `sudo make install`
 
-I hate the last step...
+The last step is not so good.
 It should be possible to link the local copy of the static library that we get from just plain `make`,
 and this would be better than installing to the system with `sudo make install`.
 But I'm currently not understanding how to tweak `CMakeLists.txt` to get this to happen.
